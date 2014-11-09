@@ -5,26 +5,18 @@ __author__ = 'mike'
 import pymysql
 import os
 
-
 # Connect to db
-
 db = pymysql.connect(host="localhost", user="user", passwd="password", db="data_import", )
 
 # create a Cursor object. It will let you execute all the queries you need
-
 cur = db.cursor()
-
-#cur.execute("INSERT INTO users (firstname,lastname,email) VALUES ('Zoe','Smout', 'xxzoesxx@hotmail.com')")
 path = 'source_files/'
-#file = 'bank_details.csv'
-
 
 def drop_table(table):
     # Drop the table if it exists
     query = "DROP TABLE IF EXISTS " + table
     cur.execute(query)
     db.commit()
-
 
 def import_data(file):
     table = file.strip('csv')

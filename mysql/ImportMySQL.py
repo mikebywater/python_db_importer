@@ -24,6 +24,7 @@ class ImportMySQL:
         query = "DROP TABLE IF EXISTS " + table
         self.cur.execute(query)
         self.db.commit()
+        return "success"
 
     def import_data(self, file):
         table = file.strip('csv')

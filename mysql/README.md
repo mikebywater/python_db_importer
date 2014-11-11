@@ -8,7 +8,7 @@ To import tables into your MySQL database from you just need to import the packa
 and instantiate the class with your MySQL connection string as below. You also need to pass
 in the path where the source csv's live
 
-```Python
+```python
 
 from mysql.ImportMySQL import *
 

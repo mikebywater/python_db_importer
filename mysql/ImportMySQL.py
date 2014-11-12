@@ -4,6 +4,7 @@ __author__ = 'mike'
 
 import pymysql
 import os
+import csv
 
 
 class ImportMySQL:
@@ -32,24 +33,26 @@ class ImportMySQL:
         ImportMySQL.drop_table(self, table)
         # Open file
         n = 0
-        with open(self.path + file) as fp:
-            for line in fp:
-                line = line.rstrip()
+        with open(self.path + file) as csvfile:
+            fp = csv.reader(csvfile, delimiter=',', quotechar='"')
+            for row in fp:
+
                 n += 1
                 if n == 1:
-                    cols = line.split(',')
+                    cols = row
                     # Recreate the table from the first line of the text file (create an id column too)
                     query = "CREATE TABLE " + table + " (id INT NOT NULL AUTO_INCREMENT"
                     for col in cols:
                         query += ", " + col + " VARCHAR(30)"
                     query += " , PRIMARY KEY(id))"
+                    print(query)
                     self.cur.execute(query)
                     self.db.commit()
                 else:
-                    row = line.split(',')
                     # Fill table with data
                     query = "INSERT INTO " + table + " VALUES(NULL"
                     for rec in row:
+                        rec = rec.replace("'",  "\\'")
                         query += ", '" + rec + "'"
                     query += ")"
                     self.cur.execute(query)
@@ -59,4 +62,3 @@ class ImportMySQL:
         for file in os.listdir(self.path):
             if file.endswith(".csv"):
                 ImportMySQL.import_data(self, file)
-

@@ -11,13 +11,17 @@ class ImportMySQL:
 
 
 
-    def __init__(self, host="localhost", user="user", passwd="password", dbname="data_import", path="source_files/"):
+    def __init__(self, host="localhost", user="user", passwd="password", dbname="data_import", path="source_files"):
         self.host = host
         self.user = user
         self.passwd = passwd
         self.dbname = dbname
         self.db = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.dbname)
+        self.db.set_charset('utf8')
         self.cur = self.db.cursor()
+        self.cur.execute('SET NAMES utf8;')
+        self.cur.execute('SET CHARACTER SET utf8;')
+        self.cur.execute('SET character_set_connection=utf8;')
         self.path = path
 
     def drop_table(self, table):
@@ -28,8 +32,7 @@ class ImportMySQL:
         return "success"
 
     def import_data(self, file):
-        table = file.strip('csv')
-        table = table.strip('.')
+        table = file.replace('.csv','')
         ImportMySQL.drop_table(self, table)
         # Open file
         n = 0
@@ -43,16 +46,15 @@ class ImportMySQL:
                     # Recreate the table from the first line of the text file (create an id column too)
                     query = "CREATE TABLE " + table + " (id INT NOT NULL AUTO_INCREMENT"
                     for col in cols:
-                        query += ", " + col + " VARCHAR(30)"
+                        query += ", `" + col + "` VARCHAR(30)"
                     query += " , PRIMARY KEY(id))"
-                    print(query)
                     self.cur.execute(query)
                     self.db.commit()
                 else:
                     # Fill table with data
                     query = "INSERT INTO " + table + " VALUES(NULL"
                     for rec in row:
-                        rec = rec.replace("'",  "\\'")
+                        rec = pymysql.escape_string(rec)
                         query += ", '" + rec + "'"
                     query += ")"
                     self.cur.execute(query)

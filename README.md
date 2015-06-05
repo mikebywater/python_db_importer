@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/mikebywater/python_db_importer.png?label=ready&title=Ready)](https://waffle.io/mikebywater/python_db_importer)
 #python_db_importer#
 
 
